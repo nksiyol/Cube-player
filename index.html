@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fingerprint Scanner</title>
+  <title>Interactive Fingerprint Scanner</title>
   <style>
+    body {
+      margin: 0;
+      background: black;
+      font-family: sans-serif;
+      color: #34d9fd;
+    }
+
     .main-container {
       display: flex;
-      min-height: 100vh;
-      min-width: 250px;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: black;
+      height: 100vh;
     }
 
     .fingerprint-box {
@@ -22,6 +28,7 @@
       justify-content: center;
       border: 1px solid #34d9fd61;
       background: black;
+      cursor: pointer;
     }
 
     .fingerprint-box::before,
@@ -65,9 +72,14 @@
     .scanner {
       top: 0%;
       width: 100%;
+      height: 0%;
       position: absolute;
-      animation: scanning 4s linear infinite alternate;
       background: linear-gradient(0deg, #34d9fd6e 0%, transparent 60%);
+      animation: none;
+    }
+
+    .scanner.active {
+      animation: scanning 4s linear forwards;
     }
 
     .svg-box svg {
@@ -76,11 +88,27 @@
 
     .svg-box path {
       stroke-dasharray: 100;
-      animation: printsAnimations 4s infinite;
+      stroke-dashoffset: 50;
+      animation: none;
+    }
+
+    .svg-box path.active {
+      animation: printsAnimations 4s linear forwards;
+    }
+
+    .status-text {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #34d9fd;
+      visibility: hidden;
+    }
+
+    .status-text.active {
+      visibility: visible;
     }
 
     @keyframes printsAnimations {
-      0%, 100% {
+      0% {
         stroke-dasharray: 100;
         stroke-dashoffset: 50;
       }
@@ -88,14 +116,21 @@
         stroke-dasharray: 55;
         stroke-dashoffset: 100;
       }
+      100% {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 50;
+      }
     }
 
     @keyframes scanning {
-      0%, 100% {
+      0% {
         height: 0%;
       }
       50% {
         height: 100%;
+      }
+      100% {
+        height: 0%;
       }
     }
   </style>
@@ -103,17 +138,45 @@
 <body>
 
   <div class="main-container">
-    <div class="fingerprint-box">
-      <div class="scanner"></div>
+    <div class="fingerprint-box" onclick="startScan()">
+      <div class="scanner" id="scanner"></div>
       <div class="svg-box">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 -30 90 200" style="aspect-ratio: 1;" width="200">
-          <path stroke="#34d9fd"
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 -30 90 200" width="200">
+          <path id="fingerprint" stroke="#34d9fd"
             d="M53.694 1.9C47.463-.352 40.907-.674 34.527 1.322c-.493.154-.806.858-.7 1.573.107.714.593 1.168 1.086 1.014 6.11-1.911 12.403-1.596 18.389.578 14.316 5.2 26.232 20.797 30.77 41.172 1.756 7.879 2.501 16.27 2.65 25.062.013.73.432 1.309.936 1.29.504-.017.903-.624.89-1.355-.15-8.914-.905-17.52-2.703-25.66C81.13 23.667 68.677 7.317 53.694 1.9ZM29.892 5.904c.487-.194.772-.923.638-1.628-.134-.704-.637-1.118-1.123-.924C22.735 6.02 13.35 15.236 7.55 27.547l-.007.015C2.45 38.684-.742 52.66.149 66.222l.003.04c.213 2.476.572 4.947.931 7.422.756 5.212 1.514 10.438.923 15.746-.08.721.259 1.4.757 1.517.498.116.966-.374 1.047-1.096.617-5.549-.15-10.96-.917-16.374-.354-2.504-.71-5.007-.927-7.525-.838-12.815 2.181-26.184 7.096-36.92 5.58-11.839 14.614-20.643 20.83-23.128Z">
           </path>
         </svg>
       </div>
     </div>
+
+    <div class="status-text" id="statusText">Scanning...</div>
   </div>
+
+  <script>
+    function startScan() {
+      const scanner = document.getElementById('scanner');
+      const fingerprint = document.getElementById('fingerprint');
+      const statusText = document.getElementById('statusText');
+
+      // Remove previous classes
+      scanner.classList.remove('active');
+      fingerprint.classList.remove('active');
+      statusText.classList.remove('active');
+
+      // Restart scan
+      void scanner.offsetWidth; // trigger reflow to restart animation
+
+      // Add animation classes
+      scanner.classList.add('active');
+      fingerprint.classList.add('active');
+      statusText.classList.add('active');
+
+      // Auto stop status text after scan
+      setTimeout(() => {
+        statusText.classList.remove('active');
+      }, 4000);
+    }
+  </script>
 
 </body>
 </html>
